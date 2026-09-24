@@ -318,27 +318,28 @@
             }
         }
 
-        // Auto detect station name using Reverse Geocoding (When Online) or Coordinate String
+        // Auto detect nama tempat terdekat menggunakan Reverse Geocoding
         async function autoDetectStationName() {
             const inputEl = document.getElementById('station-name');
             showToast('Mencari nama tempat terdekat...');
 
             if (navigator.onLine) {
                 try {
-                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentPos.lat}&lon=${currentPos.lng}`);
-                    const data = await res.json();
-                    if (data && data.address) {
-                        const name = data.address.railway || data.address.suburb || data.address.town || data.address.city || "Stasiun Terdekat";
-                        inputEl.value = name.includes('Stasiun') ? name : `Stasiun ${name}`;
-                        showToast('Nama tempat terisi otomatis');
-                        return;
-                    }
-                } catch (e) {
-                    console.log('Reverse geocoding error or offline mode');
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentPos.lat}&lon=${currentPos.lng}`);
+                const data = await res.json();
+                if (data && data.address) {
+                    // Ambil tempat/fasilitas terdekat, atau nama jalan/kelurahan/kota
+                    const name = data.address.amenity || data.address.building || data.address.road || data.address.suburb || data.address.town || data.address.city || "Lokasi Terdaftar";
+                    inputEl.value = name;
+                    showToast('Nama tempat terisi otomatis');
+                    return;
                 }
+            } catch (e) {
+            console.log('Reverse geocoding error or offline mode');
             }
+        }
             // Fallback offline
-            inputEl.value = `Stasiun Near (${currentPos.lat.toFixed(3)}, ${currentPos.lng.toFixed(3)})`;
+            inputEl.value = `Lokasi (${currentPos.lat.toFixed(3)}, ${currentPos.lng.toFixed(3)})`;
             showToast('Menggunakan estimasi posisi offline');
         }
 

@@ -1,10 +1,10 @@
 {
-  "name": "Train Travel Logbook",
-  "short_name": "TrainLog",
+  "name": "Catatan Perjalanan",
+  "short_name": "TravelLog",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#1e293b",
-  "theme_color": "#0284c7",
+  "background_color": "#0f172a",
+  "theme_color": "#1e293b",
   "icons": [
     {
       "src": "icons/icon-192.png",

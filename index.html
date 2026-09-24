@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Train Travel Logbook</title>
+    <title>Catatan Perjalanan</title>
     
     <!-- PWA Web App Manifest (Dynamic Inline Data URL / Script Fallback) -->
     <meta name="theme-color" content="#1e293b">
@@ -55,8 +55,8 @@
                 <i data-lucide="train" class="w-5 h-5"></i>
             </div>
             <div>
-                <h1 class="text-base font-bold leading-tight text-white">Railway Logbook</h1>
-                <p class="text-xs text-slate-400">Pencatat Perjalanan Kereta Offline</p>
+                <h1 class="text-base font-bold leading-tight text-white">Catatan Perjalanan</h1>
+                <p class="text-xs text-slate-400">Pencatat Perjalanan</p>
             </div>
         </div>
         <div class="flex items-center space-x-2">
@@ -77,7 +77,7 @@
         <section class="bg-slate-800 rounded-2xl overflow-hidden shadow-xl border border-slate-700/60 relative">
             <div class="p-3 bg-slate-800/80 border-b border-slate-700/50 flex justify-between items-center text-xs text-slate-300">
                 <span class="flex items-center font-medium gap-1.5">
-                    <i data-lucide="map-pin" class="w-4 h-4 text-indigo-400"></i> Peta Lokasi & Marker Stasiun
+                    <i data-lucide="map-pin" class="w-4 h-4 text-indigo-400"></i> Peta Lokasi & Marker
                 </span>
                 <button onclick="centerUserLocation()" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-slate-700/50 px-2 py-1 rounded-md text-[11px] transition">
                     <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> Lokasi Saya
@@ -91,7 +91,7 @@
         <section class="bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl border border-slate-700/60 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
                 <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                    <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Catat Stasiun Baru
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Catat SLokasi Baru
                 </h2>
                 <span id="gps-status" class="text-[11px] text-slate-400 flex items-center gap-1">
                     <i data-lucide="navigation" class="w-3 h-3 text-indigo-400"></i> Mencari GPS...
@@ -102,7 +102,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <!-- Nama Stasiun -->
                     <div>
-                        <label for="station-name" class="block text-xs font-medium text-slate-300 mb-1">Nama Stasiun <span class="text-rose-400">*</span></label>
+                        <label for="station-name" class="block text-xs font-medium text-slate-300 mb-1">Nama Tempat <span class="text-rose-400">*</span></label>
                         <div class="relative">
                             <input type="text" id="station-name" required placeholder="Contoh: Stasiun Gambir / Pasarsenen" 
                                 class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-500 transition">
@@ -164,7 +164,7 @@
             <div class="flex items-center justify-between border-b border-slate-700/60 pb-3">
                 <div class="flex items-center gap-2">
                     <i data-lucide="list-checks" class="w-4 h-4 text-indigo-400"></i>
-                    <h2 class="text-sm font-semibold text-slate-200">Riwayat Perjalanan Kereta</h2>
+                    <h2 class="text-sm font-semibold text-slate-200">Riwayat Perjalanan</h2>
                     <span id="log-count" class="bg-slate-700 text-slate-300 text-[11px] px-2 py-0.5 rounded-full font-bold">0</span>
                 </div>
                 <div class="flex items-center space-x-1">
@@ -179,7 +179,7 @@
                 <div class="w-12 h-12 bg-slate-700/50 text-slate-400 rounded-full flex items-center justify-center mx-auto">
                     <i data-lucide="map" class="w-6 h-6"></i>
                 </div>
-                <p class="text-sm text-slate-400 font-medium">Belum ada stasiun yang dicatat</p>
+                <p class="text-sm text-slate-400 font-medium">Belum ada tempat yang dicatat</p>
                 <p class="text-xs text-slate-500 max-w-xs mx-auto">Isi form di atas saat kereta Anda berhenti atau melintas di stasiun tertentu.</p>
             </div>
 
@@ -501,7 +501,7 @@
             saveLogsToStorage();
             renderTimeline();
             updateMapMarkers();
-            showToast('Log stasiun telah dihapus');
+            showToast('Log telah dihapus');
         }
 
         // Clear All Logs
@@ -544,7 +544,7 @@
             });
 
             text += `\n-----------------------------------\n`;
-            text += `📊 Total Stasiun Terdata: ${sortedLogs.length}\n`;
+            text += `📊 Total Tempat Terdata: ${sortedLogs.length}\n`;
             text += `📱 Dicatat via Railway PWA Logbook`;
 
             textArea.value = text;

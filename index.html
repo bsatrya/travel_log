@@ -261,7 +261,7 @@
             }).setView([currentPos.lat, currentPos.lng], 13);
 
             // OpenStreetMap Tiles (Dark Mode Styled tile via CartoDB Dark Matter)
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 maxZoom: 19
             }).addTo(map);

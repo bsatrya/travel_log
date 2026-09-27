@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Catatan Perjalanan</title>
     
-    <!-- PWA Web App Manifest (Dynamic Inline Data URL / Script Fallback) -->
+    <!-- PWA Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e293b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Railway Log">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3448/3448610.png">
+    <meta name="apple-mobile-web-app-title" content="Travel Log">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,7 +24,6 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Custom styling for map and scrollbar */
         #map {
             height: 280px;
             width: 100%;
@@ -52,7 +52,7 @@
     <header class="sticky top-0 z-50 bg-slate-800/90 backdrop-blur border-b border-slate-700 px-4 py-3 shadow-md flex items-center justify-between">
         <div class="flex items-center space-x-2">
             <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-lg shadow-indigo-500/30">
-                <i data-lucide="train" class="w-5 h-5"></i>
+                <i data-lucide="map-pin" class="w-5 h-5"></i>
             </div>
             <div>
                 <h1 class="text-base font-bold leading-tight text-white">Catatan Perjalanan</h1>
@@ -83,7 +83,6 @@
                     <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> Lokasi Saya
                 </button>
             </div>
-            <!-- Leaflet Map Canvas -->
             <div id="map" class="bg-slate-900"></div>
         </section>
 
@@ -100,11 +99,11 @@
 
             <form id="log-form" onsubmit="handleLogSubmit(event)" class="space-y-3">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Nama Stasiun -->
+                    <!-- Nama Tempat -->
                     <div>
                         <label for="station-name" class="block text-xs font-medium text-slate-300 mb-1">Nama Tempat <span class="text-rose-400">*</span></label>
                         <div class="relative">
-                            <input type="text" id="station-name" required placeholder="Contoh: Stasiun Gambir / Pasarsenen" 
+                            <input type="text" id="station-name" required placeholder="Contoh: Alun-alun / Cafe / Rest Area" 
                                 class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-500 transition">
                             <button type="button" onclick="autoDetectStationName()" title="Gunakan koordinat terdekat" class="absolute right-2 top-2 text-slate-400 hover:text-indigo-400 transition">
                                 <i data-lucide="sparkles" class="w-4 h-4"></i>
@@ -146,7 +145,7 @@
                     <!-- Catatan Tambahan -->
                     <div>
                         <label for="log-notes" class="block text-xs font-medium text-slate-300 mb-1">Catatan Tambahan (Opsional)</label>
-                        <input type="text" id="log-notes" placeholder="Misal: Jalur 3, silang kereta komuter" 
+                        <input type="text" id="log-notes" placeholder="Misal: Istirahat kopi, jalanan macet" 
                             class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-500 transition">
                     </div>
                 </div>
@@ -154,7 +153,7 @@
                 <!-- Submit Button -->
                 <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-indigo-600/25 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
                     <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                    <span>Submit Lokasi</span>
+                    <span>Submit Log Tempat</span>
                 </button>
             </form>
         </section>
@@ -180,13 +179,21 @@
                     <i data-lucide="map" class="w-6 h-6"></i>
                 </div>
                 <p class="text-sm text-slate-400 font-medium">Belum ada tempat yang dicatat</p>
-                <p class="text-xs text-slate-500 max-w-xs mx-auto">Isi form di atas saat kereta Anda berhenti atau melintas di stasiun tertentu.</p>
+                <p class="text-xs text-slate-500 max-w-xs mx-auto">Isi form di atas saat Anda tiba atau melintas di lokasi tertentu.</p>
             </div>
 
             <!-- Timeline List Container -->
             <div id="log-timeline" class="space-y-3 relative before:absolute before:inset-0 before:left-4 before:w-0.5 before:bg-slate-700 hidden">
-                <!-- Items populated dynamically via JS -->
             </div>
+        </section>
+
+        <!-- Install PWA Button Section -->
+        <section id="pwa-install-container" class="hidden text-center pt-2 pb-4">
+            <button id="btn-pwa-install" onclick="installPWA()" 
+                class="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-indigo-400 font-semibold px-5 py-3 rounded-2xl border border-indigo-500/30 shadow-xl transition-all flex items-center justify-center space-x-2 mx-auto active:scale-95">
+                <i data-lucide="download-cloud" class="w-5 h-5"></i>
+                <span>Install Aplikasi PWA</span>
+            </button>
         </section>
     </main>
 
@@ -203,18 +210,24 @@
             </div>
 
             <p class="text-xs text-slate-400">
-                Teks ini dapat langsung di-copy dan ditempelkan ke grup chat WhatsApp, media sosial, atau jurnal pribadi.
+                Teks ini dapat langsung di-copy, diunduh sebagai file .txt, atau dibagikan langsung ke Google Keep.
             </p>
 
             <textarea id="summary-text" readonly rows="9" 
                 class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 custom-scrollbar select-all"></textarea>
 
-            <div class="flex justify-end space-x-2 pt-2">
-                <button onclick="closeSummaryModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-xl transition">
+            <div class="flex flex-wrap justify-end gap-2 pt-2">
+                <button onclick="closeSummaryModal()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-xl transition">
                     Tutup
                 </button>
-                <button onclick="copySummaryToClipboard()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-indigo-600/30">
-                    <i data-lucide="copy" class="w-4 h-4"></i> Copy Ringkasan
+                <button onclick="downloadAsTXT()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-emerald-600/30">
+                    <i data-lucide="download" class="w-4 h-4"></i> Download .TXT
+                </button>
+                <button onclick="shareToKeepOrApps()" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-amber-600/30">
+                    <i data-lucide="share" class="w-4 h-4"></i> Ekspor / Google Keep
+                </button>
+                <button onclick="copySummaryToClipboard()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-indigo-600/30">
+                    <i data-lucide="copy" class="w-4 h-4"></i> Copy
                 </button>
             </div>
         </div>
@@ -227,16 +240,14 @@
     </div>
 
     <script>
-        // Global Variables State
         let map, userMarker;
         let markersLayer = L.layerGroup();
-        let currentPos = { lat: -6.175392, lng: 106.827153 }; // Default to Jakarta/Monas area
+        let currentPos = { lat: -6.175392, lng: 106.827153 };
         let logs = [];
+        let deferredPrompt;
 
-        // Storage Key
-        const STORAGE_KEY = 'railway_travel_logs_v1';
+        const STORAGE_KEY = 'travel_logbook_v2';
 
-        // Initializer on DOM Ready
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             setWaktuSekarang();
@@ -246,7 +257,6 @@
             registerPWA();
         });
 
-        // Set Default Time to Now
         function setWaktuSekarang() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -254,24 +264,17 @@
             document.getElementById('log-time').value = `${hours}:${minutes}`;
         }
 
-        // Initialize Leaflet Map
         function initMap() {
-            map = L.map('map', {
-                zoomControl: false
-            }).setView([currentPos.lat, currentPos.lng], 13);
+            map = L.map('map', { zoomControl: false }).setView([currentPos.lat, currentPos.lng], 13);
 
-            // OpenStreetMap Tiles (Dark Mode Styled tile via CartoDB Dark Matter)
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 maxZoom: 19
             }).addTo(map);
 
-            // Add Zoom Control to Bottom Right
             L.control.zoom({ position: 'bottomright' }).addTo(map);
-
             markersLayer.addTo(map);
 
-            // User Current Location Blue Dot
             const userIcon = L.divIcon({
                 className: 'custom-user-icon',
                 html: `<div class="relative flex items-center justify-center w-6 h-6">
@@ -285,7 +288,6 @@
             userMarker = L.marker([currentPos.lat, currentPos.lng], { icon: userIcon }).addTo(map);
         }
 
-        // Setup GPS Geolocation Watcher
         function setupGeolocationWatcher() {
             const statusEl = document.getElementById('gps-status');
 
@@ -294,8 +296,6 @@
                     (position) => {
                         currentPos.lat = position.coords.latitude;
                         currentPos.lng = position.coords.longitude;
-
-                        // Update User Marker
                         userMarker.setLatLng([currentPos.lat, currentPos.lng]);
                         statusEl.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-400"></i> GPS Aktif`;
                         lucide.createIcons();
@@ -318,32 +318,28 @@
             }
         }
 
-        // Auto detect nama tempat terdekat menggunakan Reverse Geocoding
         async function autoDetectStationName() {
             const inputEl = document.getElementById('station-name');
             showToast('Mencari nama tempat terdekat...');
 
             if (navigator.onLine) {
                 try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentPos.lat}&lon=${currentPos.lng}`);
-                const data = await res.json();
-                if (data && data.address) {
-                    // Ambil tempat/fasilitas terdekat, atau nama jalan/kelurahan/kota
-                    const name = data.address.amenity || data.address.building || data.address.road || data.address.suburb || data.address.town || data.address.city || "Lokasi Terdaftar";
-                    inputEl.value = name;
-                    showToast('Nama tempat terisi otomatis');
-                    return;
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentPos.lat}&lon=${currentPos.lng}`);
+                    const data = await res.json();
+                    if (data && data.address) {
+                        const name = data.address.amenity || data.address.building || data.address.road || data.address.suburb || data.address.town || data.address.city || "Lokasi Terdaftar";
+                        inputEl.value = name;
+                        showToast('Nama tempat terisi otomatis');
+                        return;
+                    }
+                } catch (e) {
+                    console.log('Reverse geocoding error or offline mode');
                 }
-            } catch (e) {
-            console.log('Reverse geocoding error or offline mode');
             }
-        }
-            // Fallback offline
             inputEl.value = `Lokasi (${currentPos.lat.toFixed(3)}, ${currentPos.lng.toFixed(3)})`;
             showToast('Menggunakan estimasi posisi offline');
         }
 
-        // Form Submit Handler
         function handleLogSubmit(event) {
             event.preventDefault();
 
@@ -370,7 +366,6 @@
             renderTimeline();
             updateMapMarkers();
 
-            // Reset Form Fields
             document.getElementById('station-name').value = '';
             document.getElementById('log-notes').value = '';
             setWaktuSekarang();
@@ -378,7 +373,6 @@
             showToast(`Log ${stationName} berhasil disimpan!`);
         }
 
-        // Save to LocalStorage
         function saveLogsToStorage() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
@@ -387,13 +381,10 @@
             }
         }
 
-        // Load Logs from LocalStorage
         function loadLogsFromStorage() {
             try {
                 const data = localStorage.getItem(STORAGE_KEY);
-                if (data) {
-                    logs = JSON.parse(data);
-                }
+                if (data) logs = JSON.parse(data);
             } catch (e) {
                 logs = [];
             }
@@ -401,17 +392,14 @@
             updateMapMarkers();
         }
 
-        // Render Map Markers from Logs
         function updateMapMarkers() {
             markersLayer.clearLayers();
-
             if (logs.length === 0) return;
 
             const latLngs = [];
 
             logs.forEach((log, idx) => {
                 const colorClass = log.action === 'Berhenti' ? '#f59e0b' : '#3b82f6';
-                const isLatest = idx === logs.length - 1;
 
                 const customMarkerIcon = L.divIcon({
                     className: 'station-marker',
@@ -429,19 +417,16 @@
                 latLngs.push([log.lat, log.lng]);
             });
 
-            // Draw line connecting stations
             if (latLngs.length > 1) {
                 const polyline = L.polyline(latLngs, { color: '#6366f1', weight: 3, opacity: 0.8, dashArray: '5, 8' });
                 markersLayer.addLayer(polyline);
             }
 
-            // Fit Bounds if multiple points
             if (latLngs.length > 0) {
                 map.fitBounds(L.latLngBounds(latLngs).pad(0.2));
             }
         }
 
-        // Render History Timeline UI
         function renderTimeline() {
             const container = document.getElementById('log-timeline');
             const emptyState = document.getElementById('empty-state');
@@ -458,7 +443,7 @@
             emptyState.classList.add('hidden');
             container.classList.remove('hidden');
 
-            container.innerHTML = logs.map((log, index) => {
+            container.innerHTML = logs.map((log) => {
                 const isBerhenti = log.action === 'Berhenti';
                 const badgeStyle = isBerhenti 
                     ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' 
@@ -466,10 +451,7 @@
 
                 return `
                     <div class="relative pl-8 group">
-                        <!-- Timeline Dot -->
                         <div class="absolute left-2.5 top-2.5 -translate-x-1/2 w-3 h-3 rounded-full border-2 border-slate-800 ${isBerhenti ? 'bg-amber-400' : 'bg-blue-400'} shadow"></div>
-
-                        <!-- Card Item -->
                         <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3 shadow-md hover:border-slate-600 transition">
                             <div class="flex items-start justify-between">
                                 <div class="space-y-0.5">
@@ -491,12 +473,11 @@
                         </div>
                     </div>
                 `;
-            }).reverse().join(''); // Show latest on top
+            }).reverse().join('');
 
             lucide.createIcons();
         }
 
-        // Delete Single Log
         function deleteLog(id) {
             logs = logs.filter(item => item.id !== id);
             saveLogsToStorage();
@@ -505,7 +486,6 @@
             showToast('Log telah dihapus');
         }
 
-        // Clear All Logs
         function clearAllLogs() {
             if (logs.length === 0) return;
             if (confirm('Apakah Anda yakin ingin menghapus seluruh log perjalanan ini?')) {
@@ -517,7 +497,6 @@
             }
         }
 
-        // Open & Generate Travel Summary Text
         function openSummaryModal() {
             const modal = document.getElementById('summary-modal');
             const textArea = document.getElementById('summary-text');
@@ -527,17 +506,16 @@
                 return;
             }
 
-            // Sort logs by time/timestamp ascending for accurate chronological order
             const sortedLogs = [...logs].sort((a, b) => a.id - b.id);
             const startStation = sortedLogs[0];
             const endStation = sortedLogs[sortedLogs.length - 1];
 
-            let text = `🚄 *RINGKASAN PERJALANAN KERETA API*\n`;
+            let text = `📍 *RINGKASAN CATATAN PERJALANAN*\n`;
             text += `📅 Tanggal: ${new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}\n`;
-            text += `📍 Rute: ${startStation.station} ➡️ ${endStation.station}\n`;
+            text += `🚩 Rute: ${startStation.station} ➡️ ${endStation.station}\n`;
             text += `-----------------------------------\n\n`;
 
-            sortedLogs.forEach((item, idx) => {
+            sortedLogs.forEach((item) => {
                 const symbol = item.action === 'Berhenti' ? '🛑' : '⚡';
                 text += `${symbol} *${item.time}* - ${item.station} (${item.action})`;
                 if (item.notes) text += ` _[${item.notes}]_`;
@@ -546,7 +524,7 @@
 
             text += `\n-----------------------------------\n`;
             text += `📊 Total Tempat Terdata: ${sortedLogs.length}\n`;
-            text += `📱 Dicatat via Railway PWA Logbook`;
+            text += `📱 Dicatat via Travel Logbook PWA`;
 
             textArea.value = text;
             modal.classList.remove('hidden');
@@ -559,11 +537,9 @@
             modal.classList.remove('flex');
         }
 
-        // Copy Summary to Clipboard
         function copySummaryToClipboard() {
             const textArea = document.getElementById('summary-text');
             textArea.select();
-            
             try {
                 document.execCommand('copy');
                 showToast('Ringkasan disalin ke clipboard!');
@@ -573,7 +549,46 @@
             }
         }
 
-        // Toast Helper
+        async function shareToKeepOrApps() {
+            const textData = document.getElementById('summary-text').value;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Catatan Perjalanan',
+                        text: textData
+                    });
+                    showToast('Berhasil membuka menu berbagi!');
+                } catch (err) {
+                    console.log('Share dibatalkan');
+                }
+            } else {
+                copySummaryToClipboard();
+                window.open('https://keep.google.com/', '_blank');
+                showToast('Teks disalin! Silakan tempel di Google Keep.');
+            }
+        }
+
+        function downloadAsTXT() {
+            const textData = document.getElementById('summary-text').value;
+            if (!textData) return;
+
+            const blob = new Blob([textData], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            const today = new Date().toISOString().split('T')[0];
+            link.href = url;
+            link.download = `Catatan_Perjalanan_${today}.txt`;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast('File TXT berhasil diunduh!');
+        }
+
         function showToast(msg) {
             const toast = document.getElementById('toast');
             const msgEl = document.getElementById('toast-message');
@@ -588,32 +603,38 @@
             }, 2500);
         }
 
-        // Service Worker Registration for PWA Offline Support
         function registerPWA() {
             if ('serviceWorker' in navigator) {
-                const swCode = `
-                    const CACHE_NAME = 'rail-log-v1';
-                    self.addEventListener('install', e => {
-                        e.waitUntil(
-                            caches.open(CACHE_NAME).then(cache => {
-                                return cache.addAll(['./']);
-                            })
-                        );
-                    });
-                    self.addEventListener('fetch', e => {
-                        e.respondWith(
-                            caches.match(e.request).then(res => res || fetch(e.request))
-                        );
-                    });
-                `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-
-                navigator.serviceWorker.register(swUrl)
-                    .then(() => console.log('PWA Service Worker registered'))
-                    .catch(err => console.log('SW registration skipped:', err));
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log('Service Worker terdaftar'))
+                    .catch(err => console.log('SW Registration error:', err));
             }
         }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installContainer = document.getElementById('pwa-install-container');
+            if (installContainer) installContainer.classList.remove('hidden');
+        });
+
+        async function installPWA() {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('User menyetujui instalasi PWA');
+            }
+            deferredPrompt = null;
+            document.getElementById('pwa-install-container').classList.add('hidden');
+        }
+
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            const installContainer = document.getElementById('pwa-install-container');
+            if (installContainer) installContainer.classList.add('hidden');
+            showToast('Aplikasi berhasil diinstall!');
+        });
     </script>
 </body>
 </html>
